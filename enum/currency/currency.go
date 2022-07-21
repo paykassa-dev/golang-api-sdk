@@ -22,4 +22,5 @@ const (
 	ADA  = enum.Currency("ADA")
 	EOS  = enum.Currency("EOS")
 	SHIB = enum.Currency("SHIB")
+	ETC  = enum.Currency("ETC")
 )
