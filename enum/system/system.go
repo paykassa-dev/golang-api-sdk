@@ -12,6 +12,7 @@ const (
 	DASH                    = enum.System("16")
 	BITCOINCASH             = enum.System("18")
 	ZCASH                   = enum.System("19")
+	ETHEREUMCLASSIC         = enum.System("21")
 	RIPPLE                  = enum.System("22")
 	TRON                    = enum.System("27")
 	STELLAR                 = enum.System("28")
