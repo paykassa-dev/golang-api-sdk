@@ -7,7 +7,6 @@ type CheckBalanceResponse struct {
 	Message string `json:"message"`
 	Data    struct {
 		BertyRub                   string `json:"berty_rub"`
-		PerfectmoneyUsd            string `json:"perfectmoney_usd"`
 		BertyUsd                   string `json:"berty_usd"`
 		BitcoinBtc                 string `json:"bitcoin_btc"`
 		EthereumEth                string `json:"ethereum_eth"`
@@ -45,8 +44,8 @@ type MakePaymentResponse struct {
 		System                enum.System   `json:"system"`
 		Currency              enum.Currency `json:"currency"`
 		Number                string        `json:"number"`
-		ShopCommissionPercent string        `json:"shop_comission_percent"`
-		ShopCommissionAmount  string        `json:"shop_comission_amount"`
+		ShopCommissionPercent string        `json:"shop_commission_percent"`
+		ShopCommissionAmount  string        `json:"shop_commission_amount"`
 		PaidCommission        string        `json:"paid_commission"`
 	} `json:"data"`
 }
@@ -97,14 +96,14 @@ type GenerateAddressResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    struct {
-		Invoice  string `json:"invoice"`
-		OrderId  string `json:"order_id"`
-		Wallet   string `json:"wallet"`
-		Amount   string `json:"amount"`
-		System   string `json:"system"`
-		Currency string `json:"currency"`
-		Url      string `json:"url"`
-		Tag      string `json:"tag"`
+		InvoiceId  	string `json:"invoice_id"`
+		OrderId  	string `json:"order_id"`
+		Wallet   	string `json:"wallet"`
+		Amount   	string `json:"amount"`
+		System   	string `json:"system"`
+		Currency 	string `json:"currency"`
+		Url      	string `json:"url"`
+		Tag      	string `json:"tag"`
 	} `json:"data"`
 }
 

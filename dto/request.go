@@ -10,27 +10,27 @@ type Request interface {
 }
 
 type CheckBalanceRequest struct {
-	Shop string
+	ShopId string
 }
 
-func NewCheckBalanceRequest(shop string) *CheckBalanceRequest {
-	return &CheckBalanceRequest{Shop: shop}
+func NewCheckBalanceRequest(shopId string) *CheckBalanceRequest {
+	return &CheckBalanceRequest{ShopId: shopId}
 }
 
 type MakePaymentRequest struct {
-	Shop           string
-	Amount         string
-	System         enum.System
-	Currency       enum.Currency
-	PaidCommission enum.CommissionPayer
-	Number         string
-	Tag            string
-	Priority       enum.TransactionPriority
-	Test           bool
+	ShopId          string
+	Amount         	string
+	System         	enum.System
+	Currency       	enum.Currency
+	PaidCommission 	enum.CommissionPayer
+	Number         	string
+	Tag            	string
+	Priority       	enum.TransactionPriority
+	Test           	bool
 }
 
-func NewMakePaymentRequest(shop string, amount string, system enum.System, currency enum.Currency, number string) *MakePaymentRequest {
-	return &MakePaymentRequest{Shop: shop, Amount: amount, Currency: currency, System: system, Number: number}
+func NewMakePaymentRequest(shopId string, amount string, system enum.System, currency enum.Currency, number string) *MakePaymentRequest {
+	return &MakePaymentRequest{ShopId: shopId, Amount: amount, Currency: currency, System: system, Number: number}
 }
 
 type CheckPaymentRequest struct {
@@ -94,7 +94,7 @@ func (r GetPaymentUrlRequest) Normalize() map[string]string {
 
 func (r CheckBalanceRequest) Normalize() map[string]string {
 	return map[string]string{
-		"shop": r.Shop,
+		"shop_id": r.ShopId,
 	}
 }
 
@@ -133,7 +133,7 @@ func (r MakePaymentRequest) Normalize() map[string]string {
 		"paid_commission": string(r.PaidCommission),
 		"system":          string(r.System),
 		"currency":        string(r.Currency),
-		"shop":            r.Shop,
+		"shop_id":            r.ShopId,
 		"amount":          r.Amount,
 		"test":            strconv.FormatBool(r.Test),
 	}

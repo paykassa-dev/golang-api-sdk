@@ -3,7 +3,6 @@ package system
 import "github.com/paykassa-dev/golang-api-sdk/enum"
 
 const (
-	PERFECTMONEY            = enum.System("2")
 	BERTY                   = enum.System("7")
 	BITCOIN                 = enum.System("11")
 	ETHEREUM                = enum.System("12")

@@ -114,7 +114,7 @@ func TestCheckTransactionRequest_Normalize(t *testing.T) {
 
 func TestCheckBalanceRequest_Normalize1(t *testing.T) {
 	type fields struct {
-		shop string
+		shopId string
 	}
 	tests := []struct {
 		name   string
@@ -124,30 +124,30 @@ func TestCheckBalanceRequest_Normalize1(t *testing.T) {
 		{
 			fields: fields{},
 			want: map[string]string{
-				"shop": "",
+				"shop_id": "",
 			},
 		},
 		{
 			fields: fields{
-				shop: "",
+				shopId: "",
 			},
 			want: map[string]string{
-				"shop": "",
+				"shop_id": "",
 			},
 		},
 		{
 			fields: fields{
-				shop: "test",
+				shopId: "test",
 			},
 			want: map[string]string{
-				"shop": "test",
+				"shop_id": "test",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := CheckBalanceRequest{
-				Shop: tt.fields.shop,
+				ShopId: tt.fields.shopId,
 			}
 			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Normalize() = %v, want %v", got, tt.want)
@@ -158,7 +158,7 @@ func TestCheckBalanceRequest_Normalize1(t *testing.T) {
 
 func TestMakePaymentRequest_Normalize(t *testing.T) {
 	type fields struct {
-		shop           string
+		shopId           string
 		amount         string
 		currency       enum.Currency
 		system         enum.System
@@ -175,7 +175,7 @@ func TestMakePaymentRequest_Normalize(t *testing.T) {
 	}{
 		{
 			fields: fields{
-				shop:           "123",
+				shopId:           "123",
 				amount:         "0.12345678",
 				currency:       currency.BTC,
 				system:         system.BITCOIN,
@@ -186,30 +186,30 @@ func TestMakePaymentRequest_Normalize(t *testing.T) {
 				test:           true,
 			},
 			want: map[string]string{
-				"shop":            "123",
-				"amount":          "0.12345678",
-				"currency":        "BTC",
-				"system":          "11",
-				"paid_commission": "client",
-				"number":          "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
-				"tag":             "549",
-				"priority":        "high",
-				"test":            "true",
+				"shop_id":          "123",
+				"amount":          	"0.12345678",
+				"currency":        	"BTC",
+				"system":          	"11",
+				"paid_commission": 	"client",
+				"number":          	"3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+				"tag":             	"549",
+				"priority":        	"high",
+				"test":            	"true",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := MakePaymentRequest{
-				Shop:           tt.fields.shop,
-				Amount:         tt.fields.amount,
-				Currency:       tt.fields.currency,
-				System:         tt.fields.system,
-				PaidCommission: tt.fields.paidCommission,
-				Number:         tt.fields.number,
-				Tag:            tt.fields.tag,
-				Priority:       tt.fields.priority,
-				Test:           tt.fields.test,
+				ShopId:           	tt.fields.shopId,
+				Amount:         	tt.fields.amount,
+				Currency:       	tt.fields.currency,
+				System:         	tt.fields.system,
+				PaidCommission: 	tt.fields.paidCommission,
+				Number:         	tt.fields.number,
+				Tag:            	tt.fields.tag,
+				Priority:       	tt.fields.priority,
+				Test:           	tt.fields.test,
 			}
 			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Normalize() = %v, want %v", got, tt.want)
@@ -258,8 +258,8 @@ func TestGenerateAddressRequest_Normalize(t *testing.T) {
 			fields: fields{
 				paidCommission: payer.Shop,
 				comment:        "TEST",
-				currency:       currency.USD,
-				system:         system.PERFECTMONEY,
+				currency:       currency.USDT,
+				system:         system.TRON_TRC20,
 				amount:         "123.45",
 				orderId:        "order_id",
 				test:           true,
@@ -267,8 +267,8 @@ func TestGenerateAddressRequest_Normalize(t *testing.T) {
 			want: map[string]string{
 				"order_id":        "order_id",
 				"amount":          "123.45",
-				"currency":        "USD",
-				"system":          "2",
+				"currency":        "USDT",
+				"system":          "30",
 				"comment":         "TEST",
 				"phone":           "false",
 				"paid_commission": "shop",
@@ -334,8 +334,8 @@ func TestGetPaymentUrlRequest_Normalize(t *testing.T) {
 			fields: fields{
 				PaidCommission: payer.Shop,
 				Comment:        "TEST",
-				Currency:       currency.USD,
-				System:         system.PERFECTMONEY,
+				Currency:       currency.USDT,
+				System:         system.TRON_TRC20,
 				Amount:         "123.45",
 				OrderId:        "order_id",
 				Test:           true,
@@ -343,8 +343,8 @@ func TestGetPaymentUrlRequest_Normalize(t *testing.T) {
 			want: map[string]string{
 				"order_id":        "order_id",
 				"amount":          "123.45",
-				"currency":        "USD",
-				"system":          "2",
+				"currency":        "USDT",
+				"system":          "30",
 				"comment":         "TEST",
 				"phone":           "false",
 				"paid_commission": "shop",

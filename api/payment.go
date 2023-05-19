@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-const apiBaseUrl = "https://paykassa.app/api/0.5/index.php"
+const apiBaseUrl = "https://paykassa.app/api/0.9/index.php"
 
 type PaymentApiInterface interface {
 	CheckBalance(request *dto.CheckBalanceRequest) *dto.CheckBalanceResponse
