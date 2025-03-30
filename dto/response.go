@@ -6,15 +6,12 @@ type CheckBalanceResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    struct {
-		BertyRub                   string `json:"berty_rub"`
-		BertyUsd                   string `json:"berty_usd"`
 		BitcoinBtc                 string `json:"bitcoin_btc"`
 		EthereumEth                string `json:"ethereum_eth"`
 		LitecoinLtc                string `json:"litecoin_ltc"`
 		DogecoinDoge               string `json:"dogecoin_doge"`
 		DashDash                   string `json:"dash_dash"`
 		BitcoincashBch             string `json:"bitcoincash_bch"`
-		ZcashZec                   string `json:"zcash_zec"`
 		RippleXrp                  string `json:"ripple_xrp"`
 		TronTrx                    string `json:"tron_trx"`
 		StellarXlm                 string `json:"stellar_xlm"`
@@ -29,6 +26,8 @@ type CheckBalanceResponse struct {
 		BinancesmartchainBep20Btc  string `json:"binancesmartchain_bep20_btc"`
 		BinancesmartchainBep20Eth  string `json:"binancesmartchain_bep20_eth"`
 		BinancesmartchainBep20Doge string `json:"binancesmartchain_bep20_doge"`
+		TonTon                     string `json:"ton_ton"`
+		TonUsdt                    string `json:"ton_usdt"`
 	} `json:"data"`
 }
 
@@ -96,14 +95,14 @@ type GenerateAddressResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    struct {
-		InvoiceId  	string `json:"invoice_id"`
-		OrderId  	string `json:"order_id"`
-		Wallet   	string `json:"wallet"`
-		Amount   	string `json:"amount"`
-		System   	string `json:"system"`
-		Currency 	string `json:"currency"`
-		Url      	string `json:"url"`
-		Tag      	string `json:"tag"`
+		InvoiceId string `json:"invoice_id"`
+		OrderId   string `json:"order_id"`
+		Wallet    string `json:"wallet"`
+		Amount    string `json:"amount"`
+		System    string `json:"system"`
+		Currency  string `json:"currency"`
+		Url       string `json:"url"`
+		Tag       string `json:"tag"`
 	} `json:"data"`
 }
 
