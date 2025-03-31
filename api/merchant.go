@@ -5,6 +5,7 @@ import (
 	"github.com/paykassa-dev/golang-api-sdk/dto"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 const sciBaseUrl = "https://paykassa.app/sci/0.4/index.php"
@@ -14,17 +15,21 @@ type MerchantApiInterface interface {
 	CheckTransaction(request *dto.CheckTransactionRequest) *dto.CheckTransactionResponse
 	GenerateAddress(request *dto.GenerateAddressRequest) *dto.GenerateAddressResponse
 	GetPaymentUrl(request *dto.GetPaymentUrlRequest) *dto.GetPaymentUrlResponse
-	SetSciId(id string)
-	SetSciKey(key string)
+	SetTest(test bool)
 }
 
 type MerchantApi struct {
 	sciId  string
 	sciKey string
+	test   bool
 }
 
 func NewMerchantApi(sciId string, sciKey string) MerchantApiInterface {
-	return &MerchantApi{sciId: sciId, sciKey: sciKey}
+	return &MerchantApi{sciId: sciId, sciKey: sciKey, test: false}
+}
+
+func (m *MerchantApi) SetTest(test bool) {
+	m.test = test
 }
 
 func (m *MerchantApi) CheckPayment(request *dto.CheckPaymentRequest) *dto.CheckPaymentResponse {
@@ -134,15 +139,11 @@ func (m *MerchantApi) makeHttpRequest(endpoint string, request dto.Request) (*ht
 
 func (m *MerchantApi) createRequestPayload(endpoint string, request dto.Request) url.Values {
 	data := request.Normalize()
-	payload := make(url.Values, len(data)+3)
 
-	for key, value := range data {
-		payload[key] = []string{value}
-	}
+	data.Set("func", endpoint)
+	data.Set("sci_id", m.sciId)
+	data.Set("sci_key", m.sciKey)
+	data.Set("test", strconv.FormatBool(m.test))
 
-	payload["func"] = []string{endpoint}
-	payload["sci_id"] = []string{m.sciId}
-	payload["sci_key"] = []string{m.sciKey}
-
-	return payload
+	return data
 }

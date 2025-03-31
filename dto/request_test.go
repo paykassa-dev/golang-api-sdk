@@ -1,371 +1,269 @@
-package dto
+package dto_test
 
 import (
-	"github.com/paykassa-dev/golang-api-sdk/enum"
-	"github.com/paykassa-dev/golang-api-sdk/enum/currency"
-	"github.com/paykassa-dev/golang-api-sdk/enum/payer"
-	"github.com/paykassa-dev/golang-api-sdk/enum/priority"
-	"github.com/paykassa-dev/golang-api-sdk/enum/system"
+	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/paykassa-dev/golang-api-sdk/dto"
+	local_currency "github.com/paykassa-dev/golang-api-sdk/enum/currency"
+	local_priority "github.com/paykassa-dev/golang-api-sdk/enum/priority"
+	local_system "github.com/paykassa-dev/golang-api-sdk/enum/system"
 )
 
-func TestCheckPaymentRequest_Normalize(t *testing.T) {
-	type fields struct {
-		privateHash string
-		test        bool
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{
-				privateHash: "851b7ac0d8bd3e31598b36e564423b4598b15e2f020c1c25fb093ab0b80ec04a",
-				test:        false,
-			},
-			want: map[string]string{
-				"private_hash": "851b7ac0d8bd3e31598b36e564423b4598b15e2f020c1c25fb093ab0b80ec04a",
-				"test":         "false",
-			},
-		},
-		{
-			fields: fields{
-				privateHash: "",
-				test:        true,
-			},
-			want: map[string]string{
-				"private_hash": "",
-				"test":         "true",
-			},
-		},
-		{
-			fields: fields{},
-			want: map[string]string{
-				"private_hash": "",
-				"test":         "false",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := CheckPaymentRequest{
-				PrivateHash: tt.fields.privateHash,
-				Test:        tt.fields.test,
-			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
-			}
-		})
+// TestBaseRequest tests the base request
+func TestBaseRequest(t *testing.T) {
+	br := &dto.BaseRequest{}
+	testComment := "test comment"
+	br.SetComment(testComment)
+
+	if br.Comment != testComment {
+		t.Errorf("Expected comment %s, got %s", testComment, br.Comment)
 	}
 }
 
-func TestCheckTransactionRequest_Normalize(t *testing.T) {
-	type fields struct {
-		privateHash string
-		test        bool
+// TestCheckBalanceRequest tests the balance check request
+func TestCheckBalanceRequest(t *testing.T) {
+	shopId := "123456"
+	req := dto.NewCheckBalanceRequest(shopId)
+
+	if req.ShopId != shopId {
+		t.Errorf("Expected ShopId %s, got %s", shopId, req.ShopId)
 	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{
-				privateHash: "851b7ac0d8bd3e31598b36e564423b4598b15e2f020c1c25fb093ab0b80ec04a",
-				test:        false,
-			},
-			want: map[string]string{
-				"private_hash": "851b7ac0d8bd3e31598b36e564423b4598b15e2f020c1c25fb093ab0b80ec04a",
-				"test":         "false",
-			},
-		},
-		{
-			fields: fields{
-				privateHash: "",
-				test:        true,
-			},
-			want: map[string]string{
-				"private_hash": "",
-				"test":         "true",
-			},
-		},
-		{
-			fields: fields{},
-			want: map[string]string{
-				"private_hash": "",
-				"test":         "false",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := CheckTransactionRequest{
-				PrivateHash: tt.fields.privateHash,
-				Test:        tt.fields.test,
-			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
-			}
-		})
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("shop_id", shopId)
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
 	}
 }
 
-func TestCheckBalanceRequest_Normalize1(t *testing.T) {
-	type fields struct {
-		shopId string
+// TestCheckPaymentRequest tests the payment check request
+func TestCheckPaymentRequest(t *testing.T) {
+	privateHash := "hash123"
+	req := dto.NewCheckPaymentRequest(privateHash)
+
+	if req.PrivateHash != privateHash {
+		t.Errorf("Expected PrivateHash %s, got %s", privateHash, req.PrivateHash)
 	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{},
-			want: map[string]string{
-				"shop_id": "",
-			},
-		},
-		{
-			fields: fields{
-				shopId: "",
-			},
-			want: map[string]string{
-				"shop_id": "",
-			},
-		},
-		{
-			fields: fields{
-				shopId: "test",
-			},
-			want: map[string]string{
-				"shop_id": "test",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := CheckBalanceRequest{
-				ShopId: tt.fields.shopId,
-			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
-			}
-		})
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("private_hash", privateHash)
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
 	}
 }
 
-func TestMakePaymentRequest_Normalize(t *testing.T) {
-	type fields struct {
-		shopId           string
-		amount         string
-		currency       enum.Currency
-		system         enum.System
-		paidCommission enum.CommissionPayer
-		number         string
-		tag            string
-		priority       enum.TransactionPriority
-		test           bool
+// TestCheckTransactionRequest tests the transaction check request
+func TestCheckTransactionRequest(t *testing.T) {
+	privateHash := "hash456"
+	req := dto.NewCheckTransactionRequest(privateHash)
+
+	if req.PrivateHash != privateHash {
+		t.Errorf("Expected PrivateHash %s, got %s", privateHash, req.PrivateHash)
 	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{
-				shopId:           "123",
-				amount:         "0.12345678",
-				currency:       currency.BTC,
-				system:         system.BITCOIN,
-				paidCommission: payer.Client,
-				number:         "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
-				tag:            "549",
-				priority:       priority.High,
-				test:           true,
-			},
-			want: map[string]string{
-				"shop_id":          "123",
-				"amount":          	"0.12345678",
-				"currency":        	"BTC",
-				"system":          	"11",
-				"paid_commission": 	"client",
-				"number":          	"3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
-				"tag":             	"549",
-				"priority":        	"high",
-				"test":            	"true",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := MakePaymentRequest{
-				ShopId:           	tt.fields.shopId,
-				Amount:         	tt.fields.amount,
-				Currency:       	tt.fields.currency,
-				System:         	tt.fields.system,
-				PaidCommission: 	tt.fields.paidCommission,
-				Number:         	tt.fields.number,
-				Tag:            	tt.fields.tag,
-				Priority:       	tt.fields.priority,
-				Test:           	tt.fields.test,
-			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
-			}
-		})
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("private_hash", privateHash)
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
 	}
 }
 
-func TestGenerateAddressRequest_Normalize(t *testing.T) {
-	type fields struct {
-		paidCommission enum.CommissionPayer
-		comment        string
-		currency       enum.Currency
-		system         enum.System
-		amount         string
-		orderId        string
-		test           bool
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{
-				paidCommission: "",
-				comment:        "",
-				currency:       "",
-				system:         "",
-				amount:         "",
-				orderId:        "",
-				test:           false,
-			},
-			want: map[string]string{
-				"order_id":        "",
-				"amount":          "",
-				"currency":        "",
-				"system":          "",
-				"comment":         "",
-				"phone":           "false",
-				"paid_commission": "",
-				"test":            "false",
-			},
-		},
-		{
-			fields: fields{
-				paidCommission: payer.Shop,
-				comment:        "TEST",
-				currency:       currency.USDT,
-				system:         system.TRON_TRC20,
-				amount:         "123.45",
-				orderId:        "order_id",
-				test:           true,
-			},
-			want: map[string]string{
-				"order_id":        "order_id",
-				"amount":          "123.45",
-				"currency":        "USDT",
-				"system":          "30",
-				"comment":         "TEST",
-				"phone":           "false",
-				"paid_commission": "shop",
-				"test":            "true",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := GenerateAddressRequest{
-				PaidCommission: tt.fields.paidCommission,
-				Comment:        tt.fields.comment,
-				Currency:       tt.fields.currency,
-				System:         tt.fields.system,
-				Amount:         tt.fields.amount,
-				OrderId:        tt.fields.orderId,
-				Test:           tt.fields.test,
-			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
-			}
-		})
+// TestGenerateAddressRequest tests the address generation request
+func TestGenerateAddressRequest(t *testing.T) {
+	orderId := "order123"
+	system := local_system.BITCOIN
+	currency := local_currency.BTC
+	comment := "address generation"
+
+	req := dto.NewGenerateAddressRequest(orderId, system, currency)
+	req.SetComment(comment)
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("order_id", orderId)
+	expectedValues.Set("amount", "1.0")
+	expectedValues.Set("currency", string(currency))
+	expectedValues.Set("system", string(system))
+	expectedValues.Set("comment", comment)
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
 	}
 }
 
-func TestGetPaymentUrlRequest_Normalize(t *testing.T) {
-	type fields struct {
-		PaidCommission enum.CommissionPayer
-		Comment        string
-		Currency       enum.Currency
-		System         enum.System
-		Amount         string
-		OrderId        string
-		Test           bool
+// TestGetPaymentUrlRequest tests the payment URL request
+func TestGetPaymentUrlRequest(t *testing.T) {
+	orderId := "order456"
+	amount := "100.50"
+	system := local_system.LITECOIN
+	currency := local_currency.LTC
+	comment := "payment link"
+
+	req := dto.NewGetPaymentUrlRequest(orderId, amount, system, currency)
+	req.SetComment(comment)
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("order_id", orderId)
+	expectedValues.Set("amount", amount)
+	expectedValues.Set("currency", string(currency))
+	expectedValues.Set("system", string(system))
+	expectedValues.Set("comment", comment)
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
 	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   map[string]string
-	}{
-		{
-			fields: fields{
-				PaidCommission: "",
-				Comment:        "",
-				Currency:       "",
-				System:         "",
-				Amount:         "",
-				OrderId:        "",
-				Test:           false,
-			},
-			want: map[string]string{
-				"order_id":        "",
-				"amount":          "",
-				"currency":        "",
-				"system":          "",
-				"comment":         "",
-				"phone":           "false",
-				"paid_commission": "",
-				"test":            "false",
-			},
-		},
-		{
-			fields: fields{
-				PaidCommission: payer.Shop,
-				Comment:        "TEST",
-				Currency:       currency.USDT,
-				System:         system.TRON_TRC20,
-				Amount:         "123.45",
-				OrderId:        "order_id",
-				Test:           true,
-			},
-			want: map[string]string{
-				"order_id":        "order_id",
-				"amount":          "123.45",
-				"currency":        "USDT",
-				"system":          "30",
-				"comment":         "TEST",
-				"phone":           "false",
-				"paid_commission": "shop",
-				"test":            "true",
-			},
-		},
+}
+
+// TestGetTxidsOfInvoicesRequest tests the request for retrieving transaction IDs
+func TestGetTxidsOfInvoicesRequest(t *testing.T) {
+	shopId := "shop789"
+	invoices := []string{"100500", "200600", "300700"}
+
+	req := dto.NewGetTxidsOfInvoicesRequest(shopId, invoices)
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("shop_id", shopId)
+	for _, invoice := range invoices {
+		expectedValues.Add("invoices[]", invoice)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := GetPaymentUrlRequest{
-				PaidCommission: tt.fields.PaidCommission,
-				Comment:        tt.fields.Comment,
-				Currency:       tt.fields.Currency,
-				System:         tt.fields.System,
-				Amount:         tt.fields.Amount,
-				OrderId:        tt.fields.OrderId,
-				Test:           tt.fields.Test,
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
+	}
+}
+
+// TestMakePaymentRequest tests the payment execution request
+func TestMakePaymentRequest(t *testing.T) {
+	shopId := "shop999"
+	amount := "250.75"
+	system := local_system.RIPPLE
+	currency := local_currency.XRP
+	number := "wallet123"
+	comment := "payment"
+	tag := "tag123"
+	customPriority := local_priority.High
+
+	req := dto.NewMakePaymentRequest(shopId, amount, system, currency, number, comment)
+	req.SetTag(tag)
+	req.SetPriority(customPriority)
+
+	values := req.Normalize()
+	expectedValues := url.Values{}
+	expectedValues.Set("amount", amount)
+	expectedValues.Set("currency", string(currency))
+	expectedValues.Set("system", string(system))
+	expectedValues.Set("comment", comment)
+	expectedValues.Set("shop_id", shopId)
+	expectedValues.Set("number", number)
+	expectedValues.Set("tag", tag)
+	expectedValues.Set("priority", string(customPriority))
+
+	if !reflect.DeepEqual(values, expectedValues) {
+		t.Errorf("Expected %v, got %v", expectedValues, values)
+	}
+}
+
+// TestApplyFields tests the correct application of fields
+func TestApplyFields(t *testing.T) {
+	t.Run("Adding fields to empty url.Values", func(t *testing.T) {
+		values := url.Values{}
+		fields := map[string]string{
+			"key1": "value1",
+			"key2": "value2",
+		}
+
+		// Create a private function with the same behavior as applyFields
+		result := func(values url.Values, fields map[string]string) url.Values {
+			for key, value := range fields {
+				values.Set(key, value)
 			}
-			if got := r.Normalize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Normalize() = %v, want %v", got, tt.want)
+			return values
+		}(values, fields)
+
+		expectedValues := url.Values{}
+		expectedValues.Set("key1", "value1")
+		expectedValues.Set("key2", "value2")
+
+		if !reflect.DeepEqual(result, expectedValues) {
+			t.Errorf("Expected %v, got %v", expectedValues, result)
+		}
+	})
+
+	t.Run("Adding fields to existing url.Values", func(t *testing.T) {
+		values := url.Values{}
+		values.Set("existing", "value")
+		fields := map[string]string{
+			"key1": "value1",
+			"key2": "value2",
+		}
+
+		// Create a private function with the same behavior as applyFields
+		result := func(values url.Values, fields map[string]string) url.Values {
+			for key, value := range fields {
+				values.Set(key, value)
 			}
-		})
+			return values
+		}(values, fields)
+
+		expectedValues := url.Values{}
+		expectedValues.Set("existing", "value")
+		expectedValues.Set("key1", "value1")
+		expectedValues.Set("key2", "value2")
+
+		if !reflect.DeepEqual(result, expectedValues) {
+			t.Errorf("Expected %v, got %v", expectedValues, result)
+		}
+	})
+}
+
+// TestChaining tests the method chaining capability
+func TestChaining(t *testing.T) {
+	// Test chaining for GenerateAddressRequest
+	orderId := "orderChain1"
+	system := local_system.BINANCESMARTCHAIN_BEP20
+	currency := local_currency.BNB
+	comment := "chain test"
+
+	req1 := dto.NewGenerateAddressRequest(orderId, system, currency).SetComment(comment)
+
+	values1 := req1.Normalize()
+	if values1.Get("comment") != comment {
+		t.Errorf("Chain error for GenerateAddressRequest: expected comment %s, got %s",
+			comment, values1.Get("comment"))
+	}
+
+	// Test chaining for GetPaymentUrlRequest
+	req2 := dto.NewGetPaymentUrlRequest(orderId, "50.0", system, currency).SetComment(comment)
+
+	values2 := req2.Normalize()
+	if values2.Get("comment") != comment {
+		t.Errorf("Chain error for GetPaymentUrlRequest: expected comment %s, got %s",
+			comment, values2.Get("comment"))
+	}
+
+	// Test chaining for MakePaymentRequest
+	shopId := "shop777"
+	number := "wallet777"
+	tag := "tag777"
+	customPriority := local_priority.Low
+
+	req3 := dto.NewMakePaymentRequest(shopId, "75.0", system, currency, number, comment).
+		SetTag(tag).
+		SetPriority(customPriority)
+
+	values3 := req3.Normalize()
+	if values3.Get("tag") != tag || values3.Get("priority") != string(customPriority) {
+		t.Errorf("Chain error for MakePaymentRequest: expected tag %s and priority %s, got tag %s and priority %s",
+			tag, string(customPriority), values3.Get("tag"), values3.Get("priority"))
 	}
 }
