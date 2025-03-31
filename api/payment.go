@@ -5,6 +5,7 @@ import (
 	"github.com/paykassa-dev/golang-api-sdk/dto"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 const apiBaseUrl = "https://paykassa.app/api/0.9/index.php"
@@ -12,17 +13,18 @@ const apiBaseUrl = "https://paykassa.app/api/0.9/index.php"
 type PaymentApiInterface interface {
 	CheckBalance(request *dto.CheckBalanceRequest) *dto.CheckBalanceResponse
 	MakePayment(request *dto.MakePaymentRequest) *dto.MakePaymentResponse
-	SetApiId(id string)
-	SetApiKey(key string)
+	GetTxidsOfInvoices(request *dto.GetTxidsOfInvoicesRequest) *dto.GetTxidsOfInvoicesResponse
+	SetTest(test bool)
 }
 
 type PaymentApi struct {
 	apiId  string
 	apiKey string
+	test   bool
 }
 
 func NewPaymentApi(apiId string, apiKey string) PaymentApiInterface {
-	return &PaymentApi{apiId: apiId, apiKey: apiKey}
+	return &PaymentApi{apiId: apiId, apiKey: apiKey, test: false}
 }
 
 func (p PaymentApi) CheckBalance(request *dto.CheckBalanceRequest) *dto.CheckBalanceResponse {
@@ -78,17 +80,13 @@ func (p *PaymentApi) makeHttpRequest(endpoint string, request dto.Request) (*htt
 
 func (p *PaymentApi) createRequestPayload(endpoint string, request dto.Request) url.Values {
 	data := request.Normalize()
-	payload := make(url.Values, len(data)+3)
 
-	for key, value := range data {
-		payload[key] = []string{value}
-	}
+	data.Set("func", endpoint)
+	data.Set("api_id", p.apiId)
+	data.Set("api_key", p.apiKey)
+	data.Set("test", strconv.FormatBool(p.test))
 
-	payload["func"] = []string{endpoint}
-	payload["api_id"] = []string{p.apiId}
-	payload["api_key"] = []string{p.apiKey}
-
-	return payload
+	return data
 }
 
 func (p *PaymentApi) SetApiId(id string) {
@@ -97,4 +95,31 @@ func (p *PaymentApi) SetApiId(id string) {
 
 func (p *PaymentApi) SetApiKey(key string) {
 	p.apiKey = key
+}
+
+func (r *PaymentApi) SetTest(test bool) {
+	r.test = test
+}
+
+func (p PaymentApi) GetTxidsOfInvoices(request *dto.GetTxidsOfInvoicesRequest) *dto.GetTxidsOfInvoicesResponse {
+	response, err := p.makeHttpRequest("api_get_shop_txids", request)
+
+	if err != nil {
+		return &dto.GetTxidsOfInvoicesResponse{
+			Error:   true,
+			Message: err.Error(),
+		}
+	}
+
+	responseObject := &dto.GetTxidsOfInvoicesResponse{}
+	err = json.NewDecoder(response.Body).Decode(responseObject)
+
+	if err != nil {
+		return &dto.GetTxidsOfInvoicesResponse{
+			Error:   true,
+			Message: err.Error(),
+		}
+	}
+
+	return responseObject
 }
